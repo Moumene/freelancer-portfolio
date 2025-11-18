@@ -1,14 +1,12 @@
 import {
   ArrowRight,
   Code,
-  Database,
   Feather,
   GitBranch,
   Github,
   Globe,
   Linkedin,
   Menu,
-  Monitor,
   Send,
   Smartphone,
   Type,
@@ -156,70 +154,111 @@ const SERVICES = [
   {
     icon: Globe,
     title: "Enterprise Web Solution",
-    client: "Acme Corp.",
+    client: "Yassir",
     description:
-      "Developing robust, scalable, and SEO-optimized web applications and SaaS platforms using modern JavaScript frameworks. Focused on clean architecture and high performance.",
-    tech: ["React.js / Next.js", "Node.js / Express", "Tailwind CSS"],
+      "As a Core Team Member in the early stages, I contributed to the foundational development and strategic vision of the app as it scaled its operations.",
+    tech: [
+      "React.js / Next.js",
+      "Node.js / Express",
+      "TypeScript",
+      "Material UI",
+      "React Native",
+      "MongoDB",
+      "GCP",
+      "Docker",
+      "K8s",
+    ],
   },
   {
     icon: Smartphone,
     title: "Mobile App Development",
-    client: "Global Logistics Inc.",
+    client: "Club",
     description:
-      "Building native-quality mobile applications for iOS and Android simultaneously. Perfect for rapid deployment and reaching a wider audience.",
-    tech: ["React Native", "Flutter / Dart", "Native Module Integration"],
+      "As frontend lead, I was responsible for the development of the mobile app. I was also responsible for the integration of the backend.",
+    tech: [
+      "React Native",
+      "ReactJS",
+      "Flutter",
+      "Dart",
+      "Firebase",
+      "GCP",
+      "Docker",
+      "K8s",
+    ],
   },
   {
-    icon: Database,
-    title: "API & Backend Engineering",
-    client: "FinTech Innovations",
+    icon: Smartphone,
+    title: "Frontend Development",
+    client: "Maystro Delivery",
     description:
-      "Designing and implementing secure, highly-available RESTful and GraphQL APIs. Ensuring data integrity and seamless communication between frontend and database layers.",
-    tech: ["Python / Django", "GoLang / Fiber", "PostgreSQL / MongoDB"],
+      "As frontend lead, I was responsible for the development of the mobile app. I was also responsible for the integration of the backend.",
+    tech: ["React Native", "ReactJS", "TypeScript", "Material UI"],
   },
 ];
 
 const PROJECTS = [
   {
     id: 1,
-    title: "EcoTrack: Carbon Footprint PWA",
-    description:
-      "A progressive web application (PWA) designed for tracking and visualizing personal or corporate carbon emissions. Features real-time charts and dynamic goal setting.",
-    tags: ["Web", "Data Visualization", "React", "Node.js", "D3.js"],
-    link: "https://mocklink.com/ecotrack",
+    title: "Yassir: The All-in-One Super App 🚀",
+    description: `Yassir is a pioneering "All In One Super App" operating across multiple key markets, primarily focused on simplifying everyday life through technology. The platform integrates essential on-demand services, establishing itself as a comprehensive ecosystem for users. As a Core Team Member in the early stages, I contributed to the foundational development and strategic vision of the app as it scaled its operations.`,
+    tags: [
+      "Web",
+      "Data Visualization",
+      "React",
+      "Node.js",
+      "TypeScript",
+      "React Native",
+      "PostgreSQL",
+      "MongoDB",
+      "GCP",
+      "Docker",
+      "K8s",
+    ],
+    link: "https://yassir.com/",
+    color: "#08031a",
+    name: "Yassir",
+    image: "/freelancer-portfolio/src/assets/yassir-light.svg",
   },
   {
     id: 2,
-    title: "Venture: Startup Idea Validator (Mobile)",
-    description:
-      "A cross-platform mobile app that uses AI prompts to validate business ideas, providing immediate market feedback analysis and competitor research summaries.",
-    tags: ["Mobile", "AI Integration", "Flutter", "Firebase", "Gemini API"],
-    link: "https://mocklink.com/venture",
+    title: "Club App: Influencer and Content Creator Platform 🔗",
+    description: `Club is a dynamic mobile platform (developed by Brandbassador) designed to connect content creators, influencers, and brand ambassadors directly with leading brands. It functions as a centralized hub where brands publish Missions—tasks requiring social media engagement or User-Generated Content (UGC)—which creators complete to earn income, free products, and gift cards.`,
+    tags: [
+      "Mobile",
+      "Flutter",
+      "ReactJS",
+      "NestJS",
+      "Firebase",
+      "GCP",
+      "Docker",
+      "K8s",
+    ],
+    link: "https://club.co/",
+    color: "#08031a",
+    name: "Club",
+    image: "/freelancer-portfolio/src/assets/club-logo.webp",
   },
   {
     id: 3,
-    title: "OpsFlow: DevOps Automation Dashboard",
+    title: "Maystro Delivery: E-commerce Logistics & Fulfillment Platform 📦",
     description:
-      "A tailored web dashboard providing a single pane of glass for monitoring CI/CD pipelines, container health (Docker/K8s), and cloud resource usage (AWS/GCP).",
-    tags: ["Web", "DevOps", "Monitoring", "Next.js", "TypeScript"],
+      "Maystro Delivery is a specialized, end-to-end logistics platform designed to empower e-commerce store owners by handling all aspects of their delivery and fulfillment operations across Algeria and Tunisia. This mission-critical system directly addresses key logistical challenges in emerging markets, allowing merchants to focus on sales and growth.",
+    tags: ["Mobile", "React Native", "Node.js", "PostgreSQL", "MongoDB", "GCP"],
     link: "https://mocklink.com/opsflow",
+    color: "#fff",
+    name: "Maystro Delivery",
+    image: "/freelancer-portfolio/src/assets/logo.svg",
   },
 ];
 
 const SKILLS = [
   {
     category: "Frontend",
-    items: ["React", "Next.js", "Tailwind CSS", "TypeScript", "Redux"],
+    items: ["React", "Next.js", "Material UI", "TypeScript", "Redux"],
   },
   {
     category: "Backend & DevOps",
-    items: [
-      "Node.js",
-      "Python (Django/Flask)",
-      "REST/GraphQL",
-      "AWS/GCP",
-      "Docker/K8s",
-    ],
+    items: ["Node.js", "REST/GraphQL", "GCP", "Docker/K8s"],
   },
   {
     category: "Mobile",
@@ -702,7 +741,7 @@ const PortfolioCard = ({ project, index }) => {
             transition: "color 0.2s",
           }}
         >
-          View Live Project (Mock)
+          View Live Project
           <ArrowRight
             style={{ marginLeft: "8px", width: "16px", height: "16px" }}
           />
@@ -713,11 +752,14 @@ const PortfolioCard = ({ project, index }) => {
           flex: 1,
           minWidth: 0,
           marginTop: isMobile ? "0" : "2rem",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
         }}
       >
         <div
           style={{
-            backgroundColor: Colors.textFaint,
+            backgroundColor: project.color,
             height: isMobile ? "200px" : "256px",
             borderRadius: "12px",
             display: "flex",
@@ -727,18 +769,25 @@ const PortfolioCard = ({ project, index }) => {
             position: "relative",
           }}
         >
-          <Monitor
-            style={{ width: "64px", height: "64px", color: Colors.textMuted }}
-          />
           <span
             style={{
               position: "absolute",
               color: Colors.textMuted,
               fontSize: "1.125rem",
               opacity: 0.7,
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%, -50%)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            Mock Screenshot Placeholder
+            <img
+              src={project.image}
+              alt={project.title}
+              style={{ width: "148px", height: "148px" }}
+            />
           </span>
         </div>
       </div>
@@ -1139,7 +1188,7 @@ const Footer = () => {
         </div>
         <div style={{ display: "flex", gap: "1.5rem" }}>
           <a
-            href="https://github.com/yourprofile"
+            href="https://github.com/moumene"
             target="_blank"
             rel="noopener noreferrer"
             style={{ color: Colors.textMuted, transition: "color 0.2s" }}
@@ -1148,7 +1197,7 @@ const Footer = () => {
             <Github style={{ width: "24px", height: "24px" }} />
           </a>
           <a
-            href="https://linkedin.com/in/yourprofile"
+            href="https://linkedin.com/in/moumene"
             target="_blank"
             rel="noopener noreferrer"
             style={{ color: Colors.textMuted, transition: "color 0.2s" }}
