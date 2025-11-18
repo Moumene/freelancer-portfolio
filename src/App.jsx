@@ -7,12 +7,14 @@ import {
   Github,
   Globe,
   Linkedin,
+  Menu,
   Monitor,
   Send,
   Smartphone,
   Type,
+  X,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // --- STYLES DEFINITION (REPLACING TAILWIND) ---
 const Colors = {
@@ -57,6 +59,8 @@ const Styles = {
 
   // Hero Section
   heroSection: {
+    width: "100vw",
+    minWidth: "100vw",
     minHeight: "100vh",
     paddingTop: "6rem",
     paddingBottom: "3rem",
@@ -65,6 +69,8 @@ const Styles = {
     backgroundColor: Colors.bgDark,
     color: Colors.textLight,
     textAlign: "center",
+    marginLeft: "calc(50% - 50vw)", // ensures bg stretches edge-to-edge
+    marginRight: "calc(50% - 50vw)",
   },
   heroHeadline: {
     fontSize: "3.75rem",
@@ -128,7 +134,13 @@ const Styles = {
   },
 
   // Footer
-  footerContainer: { backgroundColor: Colors.bgDarker, padding: "32px 0" },
+  footerContainer: {
+    backgroundColor: Colors.bgDarker,
+    padding: "32px 0",
+    width: "100vw",
+    marginLeft: "calc(50% - 50vw)",
+    marginRight: "calc(50% - 50vw)",
+  },
 };
 
 // --- MOCK DATA ---
@@ -221,107 +233,210 @@ const SKILLS = [
 
 // --- COMPONENTS ---
 
-const Nav = () => (
-  <nav style={Styles.navContainer}>
-    <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 1rem" }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          height: "64px",
-        }}
-      >
-        <a
-          href="#home"
+const Nav = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      if (window.innerWidth >= 768) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return (
+    <nav style={Styles.navContainer}>
+      <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 1rem" }}>
+        <div
           style={{
             display: "flex",
+            justifyContent: "space-between",
             alignItems: "center",
-            fontSize: "1.5rem",
-            fontWeight: 700,
-            color: Colors.accentPrimary,
-            textDecoration: "none",
+            height: "64px",
           }}
         >
-          <Code
+          <a
+            href="#home"
             style={{
-              width: "24px",
-              height: "24px",
-              marginRight: "8px",
+              display: "flex",
+              alignItems: "center",
+              fontSize: isMobile ? "1.25rem" : "1.5rem",
+              fontWeight: 700,
               color: Colors.accentPrimary,
+              textDecoration: "none",
             }}
-          />
-          <span className="hidden sm:inline">Freelance | Solutions</span>
-          <span className="sm:hidden">FS Engineer</span>
-        </a>
-        <div style={{ display: "flex", gap: "1rem" }}>
-          {NAV_ITEMS.map((item) => (
-            <a
-              key={item.name}
-              href={item.href}
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <Code
               style={{
-                ...Styles.navLink,
-                ":hover": {
-                  backgroundColor: Colors.cardBg,
-                  color: Colors.textLight,
-                },
+                width: "24px",
+                height: "24px",
+                marginRight: "8px",
+                color: Colors.accentPrimary,
               }}
+            />
+            {isMobile ? "FS Engineer" : "Freelance | Solutions"}
+          </a>
+          {isMobile ? (
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              style={{
+                background: "none",
+                border: "none",
+                color: Colors.textLight,
+                cursor: "pointer",
+                padding: "8px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              aria-label="Toggle menu"
             >
-              {item.name}
-            </a>
-          ))}
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          ) : (
+            <div style={{ display: "flex", gap: "1rem" }}>
+              {NAV_ITEMS.map((item) => (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  style={{
+                    ...Styles.navLink,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = Colors.cardBg;
+                    e.target.style.color = Colors.textLight;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = "transparent";
+                    e.target.style.color = Colors.textMuted;
+                  }}
+                >
+                  {item.name}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+        {isMobile && isMobileMenuOpen && (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "0.5rem",
+              paddingBottom: "1rem",
+              borderTop: `1px solid ${Colors.textFaint}`,
+              marginTop: "0.5rem",
+              paddingTop: "1rem",
+            }}
+          >
+            {NAV_ITEMS.map((item) => (
+              <a
+                key={item.name}
+                href={item.href}
+                style={{
+                  ...Styles.navLink,
+                  display: "block",
+                  padding: "12px",
+                }}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {item.name}
+              </a>
+            ))}
+          </div>
+        )}
+      </div>
+    </nav>
+  );
+};
+
+const HeroSection = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return (
+    <section id="home" style={Styles.heroSection}>
+      <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 1rem" }}>
+        <h1
+          style={{
+            ...Styles.heroHeadline,
+            fontSize: isMobile ? "2rem" : "3.75rem",
+            padding: isMobile ? "0 1rem" : "0",
+          }}
+        >
+          Full-Stack Software Solutions
+        </h1>
+        <p
+          style={{
+            marginTop: "1rem",
+            maxWidth: "800px",
+            margin: "1rem auto",
+            fontSize: isMobile ? "1rem" : "1.25rem",
+            color: Colors.textMuted,
+            padding: isMobile ? "0 0.5rem" : "0",
+          }}
+        >
+          I build custom **Web and Mobile Applications** that transform business
+          challenges into scalable, production-ready systems.
+        </p>
+        <div
+          style={{
+            marginTop: "2.5rem",
+            display: "flex",
+            flexDirection: isMobile ? "column" : "row",
+            justifyContent: "center",
+            gap: "1rem",
+            padding: isMobile ? "0 1rem" : "0",
+          }}
+        >
+          <button
+            style={{
+              ...Styles.primaryButton,
+              width: isMobile ? "100%" : "auto",
+            }}
+            onClick={() => (window.location.href = "#portfolio")}
+          >
+            View My Work
+            <ArrowRight
+              style={{ marginLeft: "8px", width: "16px", height: "16px" }}
+            />
+          </button>
+          <button
+            style={{
+              ...Styles.secondaryButton,
+              width: isMobile ? "100%" : "auto",
+            }}
+            onClick={() => (window.location.href = "#contact")}
+          >
+            Start a Project
+          </button>
         </div>
       </div>
-    </div>
-  </nav>
-);
-
-const HeroSection = () => (
-  <section id="home" style={Styles.heroSection}>
-    <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 1rem" }}>
-      <h1 style={Styles.heroHeadline}>Full-Stack Software Solutions</h1>
-      <p
-        style={{
-          marginTop: "1rem",
-          maxWidth: "800px",
-          margin: "1rem auto",
-          fontSize: "1.25rem",
-          color: Colors.textMuted,
-        }}
-      >
-        I build custom **Web and Mobile Applications** that transform business
-        challenges into scalable, production-ready systems.
-      </p>
-      <div
-        style={{
-          marginTop: "2.5rem",
-          display: "flex",
-          justifyContent: "center",
-          gap: "1rem",
-        }}
-      >
-        <button
-          style={Styles.primaryButton}
-          onClick={() => (window.location.href = "#portfolio")}
-        >
-          View My Work
-          <ArrowRight
-            style={{ marginLeft: "8px", width: "16px", height: "16px" }}
-          />
-        </button>
-        <button
-          style={Styles.secondaryButton}
-          onClick={() => (window.location.href = "#contact")}
-        >
-          Start a Project
-        </button>
-      </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 const ServiceCard = ({ service }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const cardStyle = isHovered
     ? { ...Styles.card, ...Styles.cardHover }
     : Styles.card;
@@ -334,15 +449,15 @@ const ServiceCard = ({ service }) => {
     >
       <service.icon
         style={{
-          width: "40px",
-          height: "40px",
+          width: isMobile ? "32px" : "40px",
+          height: isMobile ? "32px" : "40px",
           color: Colors.accentPrimary,
           marginBottom: "16px",
         }}
       />
       <h3
         style={{
-          fontSize: "1.5rem",
+          fontSize: isMobile ? "1.25rem" : "1.5rem",
           fontWeight: 600,
           color: Colors.textLight,
           marginBottom: "4px",
@@ -352,7 +467,7 @@ const ServiceCard = ({ service }) => {
       </h3>
       <p
         style={{
-          fontSize: "1rem",
+          fontSize: isMobile ? "0.875rem" : "1rem",
           fontWeight: 400,
           color: Colors.accentPrimary,
           marginBottom: "12px",
@@ -360,7 +475,13 @@ const ServiceCard = ({ service }) => {
       >
         Client: {service.client}
       </p>
-      <p style={{ color: Colors.textMuted, marginBottom: "16px" }}>
+      <p
+        style={{
+          color: Colors.textMuted,
+          marginBottom: "16px",
+          fontSize: isMobile ? "0.875rem" : "1rem",
+        }}
+      >
         {service.description}
       </p>
       <div style={{ marginTop: "1rem" }}>
@@ -403,68 +524,103 @@ const ServiceCard = ({ service }) => {
   );
 };
 
-const ServicesSection = () => (
-  <section
-    id="services"
-    style={{
-      padding: "80px 0",
-      backgroundColor: Colors.cardBg,
-      color: Colors.textLight,
-    }}
-  >
-    <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 1rem" }}>
-      <h2
-        style={{
-          fontSize: "2.25rem",
-          fontWeight: 800,
-          textAlign: "center",
-          marginBottom: "48px",
-          color: Colors.accentPrimary,
-        }}
-      >
-        My Expertise: Solving Modern Problems
-      </h2>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-          gap: "2rem",
-        }}
-      >
-        {SERVICES.map((service, index) => (
-          <ServiceCard key={index} service={service} />
-        ))}
+const ServicesSection = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return (
+    <section
+      id="services"
+      style={{
+        padding: isMobile ? "60px 0" : "80px 0",
+        backgroundColor: Colors.cardBg,
+        color: Colors.textLight,
+        width: "100vw",
+        position: "relative",
+        marginLeft: "calc(50% - 50vw)",
+        marginRight: "calc(50% - 50vw)",
+      }}
+    >
+      <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 1rem" }}>
+        <h2
+          style={{
+            fontSize: isMobile ? "1.75rem" : "2.25rem",
+            fontWeight: 800,
+            textAlign: "center",
+            marginBottom: isMobile ? "32px" : "48px",
+            color: Colors.accentPrimary,
+            padding: isMobile ? "0 0.5rem" : "0",
+          }}
+        >
+          My Expertise: Solving Modern Problems
+        </h2>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: isMobile
+              ? "1fr"
+              : "repeat(auto-fit, minmax(300px, 1fr))",
+            gap: isMobile ? "1.5rem" : "2rem",
+          }}
+        >
+          {SERVICES.map((service, index) => (
+            <ServiceCard key={index} service={service} />
+          ))}
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 const PortfolioCard = ({ project, index }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const cardStyle = isHovered
     ? {
         ...Styles.card,
         ...Styles.cardHover,
         display: "flex",
-        flexDirection: "column",
+        flexDirection: isMobile ? "column" : "row",
       }
-    : { ...Styles.card, display: "flex", flexDirection: "column" };
+    : {
+        ...Styles.card,
+        display: "flex",
+        flexDirection: isMobile ? "column" : "row",
+      };
 
   return (
     <div
       key={project.id}
       style={{
         display: "flex",
-        flexDirection: "column",
+        flexDirection: isMobile
+          ? "column"
+          : index % 2 === 0
+          ? "row"
+          : "row-reverse",
         borderRadius: "12px",
         boxShadow: "0 4px 20px rgba(0,0,0,0.5)",
         overflow: "hidden",
         backgroundColor: Colors.cardBg,
-        padding: "40px",
+        padding: isMobile ? "24px" : "40px",
         transition: "all 0.5s",
-        marginBottom: "4rem",
-        ...cardStyle, // Apply card styles
-        ...(index % 2 !== 0 && { flexDirection: "column-reverse" }), // Simple direction swap for odd index (on mobile)
+        marginBottom: isMobile ? "2rem" : "4rem",
+        gap: isMobile ? "1.5rem" : "0",
+        width: "100%",
+        maxWidth: isMobile ? "100%" : "1200px",
+        ...cardStyle,
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -472,9 +628,9 @@ const PortfolioCard = ({ project, index }) => {
       <div
         style={{
           flex: 1,
-          paddingRight: index % 2 === 0 ? "40px" : 0,
-          paddingLeft: index % 2 !== 0 ? "40px" : 0,
-          order: index % 2 === 0 ? 1 : 2,
+          minWidth: 0,
+          paddingRight: !isMobile && index % 2 === 0 ? "40px" : 0,
+          paddingLeft: !isMobile && index % 2 !== 0 ? "40px" : 0,
         }}
       >
         <span
@@ -492,7 +648,7 @@ const PortfolioCard = ({ project, index }) => {
         </span>
         <h3
           style={{
-            fontSize: "1.875rem",
+            fontSize: isMobile ? "1.5rem" : "1.875rem",
             fontWeight: 700,
             marginBottom: "16px",
           }}
@@ -553,17 +709,22 @@ const PortfolioCard = ({ project, index }) => {
         </a>
       </div>
       <div
-        style={{ flex: 1, marginTop: "2rem", order: index % 2 === 0 ? 2 : 1 }}
+        style={{
+          flex: 1,
+          minWidth: 0,
+          marginTop: isMobile ? "0" : "2rem",
+        }}
       >
         <div
           style={{
             backgroundColor: Colors.textFaint,
-            height: "256px",
+            height: isMobile ? "200px" : "256px",
             borderRadius: "12px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             border: `4px solid ${Colors.textFaint}`,
+            position: "relative",
           }}
         >
           <Monitor
@@ -585,35 +746,57 @@ const PortfolioCard = ({ project, index }) => {
   );
 };
 
-const PortfolioSection = () => (
-  <section
-    id="portfolio"
-    style={{
-      padding: "80px 0",
-      backgroundColor: Colors.bgDark,
-      color: Colors.textLight,
-    }}
-  >
-    <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 1rem" }}>
-      <h2
-        style={{
-          fontSize: "2.25rem",
-          fontWeight: 800,
-          textAlign: "center",
-          marginBottom: "48px",
-          color: Colors.accentPrimary,
-        }}
-      >
-        Recent Projects & Case Studies
-      </h2>
-      <div style={{ display: "flex", flexDirection: "column", gap: "4rem" }}>
-        {PROJECTS.map((project, index) => (
-          <PortfolioCard key={project.id} project={project} index={index} />
-        ))}
+const PortfolioSection = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return (
+    <section
+      id="portfolio"
+      style={{
+        padding: isMobile ? "60px 0" : "80px 0",
+        backgroundColor: Colors.bgDark,
+        color: Colors.textLight,
+        width: "100vw",
+        position: "relative",
+        marginLeft: "calc(50% - 50vw)",
+        marginRight: "calc(50% - 50vw)",
+      }}
+    >
+      <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 1rem" }}>
+        <h2
+          style={{
+            fontSize: isMobile ? "1.75rem" : "2.25rem",
+            fontWeight: 800,
+            textAlign: "center",
+            marginBottom: isMobile ? "32px" : "48px",
+            color: Colors.accentPrimary,
+            padding: isMobile ? "0 0.5rem" : "0",
+          }}
+        >
+          Recent Projects & Case Studies
+        </h2>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: isMobile ? "2rem" : "4rem",
+            alignItems: "center",
+          }}
+        >
+          {PROJECTS.map((project, index) => (
+            <PortfolioCard key={project.id} project={project} index={index} />
+          ))}
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 const SkillPill = ({ item }) => (
   <li
@@ -632,75 +815,92 @@ const SkillPill = ({ item }) => (
   </li>
 );
 
-const SkillsSection = () => (
-  <section
-    id="skills"
-    style={{
-      padding: "80px 0",
-      backgroundColor: Colors.cardBg,
-      color: Colors.textLight,
-    }}
-  >
-    <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 1rem" }}>
-      <h2
-        style={{
-          fontSize: "2.25rem",
-          fontWeight: 800,
-          textAlign: "center",
-          marginBottom: "48px",
-          color: Colors.accentPrimary,
-        }}
-      >
-        Core Technical Skills
-      </h2>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-          gap: "2rem",
-        }}
-      >
-        {SKILLS.map((skill, index) => (
-          <div
-            key={index}
-            style={{
-              ...Styles.card,
-              borderTop: `4px solid ${Colors.accentPrimary}`,
-            }}
-          >
-            <h3
+const SkillsSection = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return (
+    <section
+      id="skills"
+      style={{
+        padding: isMobile ? "60px 0" : "80px 0",
+        backgroundColor: Colors.cardBg,
+        color: Colors.textLight,
+        width: "100vw",
+        position: "relative",
+        marginLeft: "calc(50% - 50vw)",
+        marginRight: "calc(50% - 50vw)",
+      }}
+    >
+      <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 1rem" }}>
+        <h2
+          style={{
+            fontSize: isMobile ? "1.75rem" : "2.25rem",
+            fontWeight: 800,
+            textAlign: "center",
+            marginBottom: isMobile ? "32px" : "48px",
+            color: Colors.accentPrimary,
+            padding: isMobile ? "0 0.5rem" : "0",
+          }}
+        >
+          Core Technical Skills
+        </h2>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: isMobile
+              ? "1fr"
+              : "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: isMobile ? "1.5rem" : "2rem",
+          }}
+        >
+          {SKILLS.map((skill, index) => (
+            <div
+              key={index}
               style={{
-                fontSize: "1.25rem",
-                fontWeight: 600,
-                marginBottom: "16px",
-                display: "flex",
-                alignItems: "center",
-                color: Colors.textLight,
+                ...Styles.card,
+                borderTop: `4px solid ${Colors.accentPrimary}`,
               }}
             >
-              <Feather
+              <h3
                 style={{
-                  width: "20px",
-                  height: "20px",
-                  marginRight: "8px",
-                  color: Colors.accentPrimary,
+                  fontSize: isMobile ? "1.125rem" : "1.25rem",
+                  fontWeight: 600,
+                  marginBottom: "16px",
+                  display: "flex",
+                  alignItems: "center",
+                  color: Colors.textLight,
                 }}
-              />{" "}
-              {skill.category}
-            </h3>
-            <ul
-              style={{ listStyle: "none", padding: 0, margin: 0, gap: "8px" }}
-            >
-              {skill.items.map((item, i) => (
-                <SkillPill key={i} item={item} />
-              ))}
-            </ul>
-          </div>
-        ))}
+              >
+                <Feather
+                  style={{
+                    width: "20px",
+                    height: "20px",
+                    marginRight: "8px",
+                    color: Colors.accentPrimary,
+                  }}
+                />{" "}
+                {skill.category}
+              </h3>
+              <ul
+                style={{ listStyle: "none", padding: 0, margin: 0, gap: "8px" }}
+              >
+                {skill.items.map((item, i) => (
+                  <SkillPill key={i} item={item} />
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 const ContactSection = () => {
   const [formData, setFormData] = useState({
@@ -709,6 +909,13 @@ const ContactSection = () => {
     message: "",
   });
   const [status, setStatus] = useState("");
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -733,29 +940,35 @@ const ContactSection = () => {
     <section
       id="contact"
       style={{
-        padding: "80px 0",
+        padding: isMobile ? "60px 0" : "80px 0",
         backgroundColor: Colors.bgDark,
         color: Colors.textLight,
+        width: "100vw",
+        position: "relative",
+        marginLeft: "calc(50% - 50vw)",
+        marginRight: "calc(50% - 50vw)",
       }}
     >
       <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 1rem" }}>
         <h2
           style={{
-            fontSize: "2.25rem",
+            fontSize: isMobile ? "1.75rem" : "2.25rem",
             fontWeight: 800,
             textAlign: "center",
             marginBottom: "16px",
             color: Colors.accentPrimary,
+            padding: isMobile ? "0 0.5rem" : "0",
           }}
         >
           Ready to Build Something Great?
         </h2>
         <p
           style={{
-            fontSize: "1.25rem",
+            fontSize: isMobile ? "1rem" : "1.25rem",
             textAlign: "center",
             color: Colors.textMuted,
-            marginBottom: "64px",
+            marginBottom: isMobile ? "32px" : "64px",
+            padding: isMobile ? "0 0.5rem" : "0",
           }}
         >
           Let's discuss your next Web or Mobile project.
@@ -766,7 +979,7 @@ const ContactSection = () => {
             maxWidth: "768px",
             margin: "0 auto",
             backgroundColor: Colors.cardBg,
-            padding: "48px",
+            padding: isMobile ? "24px" : "48px",
             borderRadius: "12px",
             boxShadow: "0 8px 30px rgba(0,0,0,0.7)",
           }}
@@ -877,68 +1090,122 @@ const ContactSection = () => {
   );
 };
 
-const Footer = () => (
-  <footer style={Styles.footerContainer}>
-    <div
+const Footer = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return (
+    <footer
       style={{
-        maxWidth: "1280px",
-        margin: "0 auto",
-        padding: "0 1rem",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        alignItems: "center",
-        color: Colors.textFaint,
+        ...Styles.footerContainer,
+        padding: isMobile ? "24px 0" : "32px 0",
       }}
     >
-      <div style={{ marginBottom: "16px", textAlign: "center" }}>
-        <p style={{ fontSize: "0.875rem" }}>
-          &copy; {new Date().getFullYear()} Freelance Software Solutions. All
-          rights reserved.
-        </p>
-        <p style={{ fontSize: "0.75rem", marginTop: "4px" }}>
-          Built with React and Inline Styles.
-        </p>
-      </div>
-      <div style={{ display: "flex", gap: "1.5rem" }}>
-        <a
-          href="https://github.com/yourprofile"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ color: Colors.textMuted, transition: "color 0.2s" }}
-          aria-label="GitHub Profile"
+      <div
+        style={{
+          maxWidth: "1280px",
+          margin: "0 auto",
+          padding: "0 1rem",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          alignItems: "center",
+          color: Colors.textFaint,
+        }}
+      >
+        <div
+          style={{
+            marginBottom: isMobile ? "12px" : "16px",
+            textAlign: "center",
+          }}
         >
-          <Github style={{ width: "24px", height: "24px" }} />
-        </a>
-        <a
-          href="https://linkedin.com/in/yourprofile"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ color: Colors.textMuted, transition: "color 0.2s" }}
-          aria-label="LinkedIn Profile"
-        >
-          <Linkedin style={{ width: "24px", height: "24px" }} />
-        </a>
+          <p style={{ fontSize: isMobile ? "0.75rem" : "0.875rem" }}>
+            &copy; {new Date().getFullYear()} Freelance Software Solutions. All
+            rights reserved.
+          </p>
+          <p
+            style={{
+              fontSize: isMobile ? "0.625rem" : "0.75rem",
+              marginTop: "4px",
+            }}
+          >
+            Built with React and Inline Styles.
+          </p>
+        </div>
+        <div style={{ display: "flex", gap: "1.5rem" }}>
+          <a
+            href="https://github.com/yourprofile"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: Colors.textMuted, transition: "color 0.2s" }}
+            aria-label="GitHub Profile"
+          >
+            <Github style={{ width: "24px", height: "24px" }} />
+          </a>
+          <a
+            href="https://linkedin.com/in/yourprofile"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: Colors.textMuted, transition: "color 0.2s" }}
+            aria-label="LinkedIn Profile"
+          >
+            <Linkedin style={{ width: "24px", height: "24px" }} />
+          </a>
+        </div>
       </div>
-    </div>
-  </footer>
-);
+    </footer>
+  );
+};
 
 // --- MAIN APP ---
 
 const App = () => {
   return (
-    <div style={Styles.appContainer}>
-      <Nav />
-      <main>
-        <HeroSection />
-        <ServicesSection />
-        <PortfolioSection />
-        <SkillsSection />
-        <ContactSection />
-      </main>
-      <Footer />
-    </div>
+    <>
+      <style>{`
+        * {
+          box-sizing: border-box;
+        }
+        html {
+          scroll-behavior: smooth;
+        }
+        body {
+          margin: 0;
+          padding: 0;
+          overflow-x: hidden;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        }
+        @media (max-width: 768px) {
+          body {
+            font-size: 14px;
+          }
+        }
+        @media (min-width: 1920px) {
+          body {
+            font-size: 18px;
+          }
+        }
+      `}</style>
+      <div style={Styles.appContainer}>
+        <Nav />
+        <main>
+          <HeroSection />
+          <ServicesSection />
+          <PortfolioSection />
+          <SkillsSection />
+          <ContactSection />
+        </main>
+        <Footer />
+      </div>
+    </>
   );
 };
 
