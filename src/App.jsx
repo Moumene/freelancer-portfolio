@@ -13,6 +13,9 @@ import {
   X,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import clubLogo from "./assets/club-logo.webp";
+import logo from "./assets/logo.svg";
+import yassirLogo from "./assets/yassir-light.svg";
 
 // --- STYLES DEFINITION (REPLACING TAILWIND) ---
 const Colors = {
@@ -217,7 +220,7 @@ const PROJECTS = [
     link: "https://yassir.com/",
     color: "#08031a",
     name: "Yassir",
-    image: "/freelancer-portfolio/tree/main/src/assets/yassir-light.svg",
+    image: yassirLogo,
   },
   {
     id: 2,
@@ -236,7 +239,7 @@ const PROJECTS = [
     link: "https://club.co/",
     color: "#08031a",
     name: "Club",
-    image: "/freelancer-portfolio/tree/main/src/assets/club-logo.webp",
+    image: clubLogo,
   },
   {
     id: 3,
@@ -247,7 +250,7 @@ const PROJECTS = [
     link: "https://mocklink.com/opsflow",
     color: "#fff",
     name: "Maystro Delivery",
-    image: "assets/logo.svg",
+    image: logo,
   },
 ];
 
