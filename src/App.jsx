@@ -973,19 +973,47 @@ const ContactSection = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus("Sending message...");
-    console.log("Form Submitted:", formData);
 
-    setTimeout(() => {
-      if (formData.name && formData.email && formData.message) {
+    // Validate form data
+    if (!formData.name || !formData.email || !formData.message) {
+      setStatus("Please fill out all fields before submitting.");
+      return;
+    }
+
+    try {
+      // Determine API URL based on environment
+      const apiUrl =
+        import.meta.env.MODE === "production"
+          ? "https://your-backend-domain.com/api/send-email" // Replace with your production backend URL
+          : "/api/send-email"; // Uses Vite proxy in development
+
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
         setStatus("Thank you! I will get back to you within 24 hours.");
         setFormData({ name: "", email: "", message: "" });
       } else {
-        setStatus("Please fill out all fields before submitting.");
+        setStatus(
+          data.error || "Failed to send message. Please try again later."
+        );
       }
-    }, 1500);
+    } catch (error) {
+      console.error("Error sending email:", error);
+      setStatus(
+        "Failed to send message. Please check your connection and try again."
+      );
+    }
   };
 
   return (
