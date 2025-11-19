@@ -985,9 +985,14 @@ const ContactSection = () => {
 
     try {
       // Determine API URL based on environment
+      // In production, use VITE_API_URL if set, otherwise use the default Railway URL
+      // In development, use the Vite proxy
       const apiUrl =
         import.meta.env.MODE === "production"
-          ? "https://your-backend-domain.com/api/send-email" // Replace with your production backend URL
+          ? `${
+              import.meta.env.VITE_API_URL ||
+              "https://your-backend.up.railway.app"
+            }/api/send-email`
           : "/api/send-email"; // Uses Vite proxy in development
 
       const response = await fetch(apiUrl, {

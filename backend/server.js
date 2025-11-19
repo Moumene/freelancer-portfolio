@@ -8,8 +8,16 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// CORS configuration
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || "*", // Allow all origins in development, set FRONTEND_URL in production
+  credentials: true,
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Create reusable transporter object using SMTP transport
@@ -57,7 +65,8 @@ app.post("/api/send-email", async (req, res) => {
       console.error("Email credentials not configured");
       return res.status(500).json({
         success: false,
-        error: "Email service not configured. Please set EMAIL_USER and EMAIL_PASS environment variables.",
+        error:
+          "Email service not configured. Please set EMAIL_USER and EMAIL_PASS environment variables.",
       });
     }
 
@@ -119,13 +128,12 @@ ${message}
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server is running on port ${PORT}`);
-  console.log(`Health check: http://localhost:${PORT}/health`);
+  console.log(`Health check: http://0.0.0.0:${PORT}/health`);
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     console.warn(
       "⚠️  WARNING: EMAIL_USER and EMAIL_PASS not set. Email functionality will not work."
     );
   }
 });
-

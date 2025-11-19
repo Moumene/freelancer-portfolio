@@ -75,10 +75,21 @@ Health check endpoint.
 
 ## Environment Variables
 
-- `PORT`: Server port (default: 3001)
+- `PORT`: Server port (default: 3001, Railway sets this automatically)
 - `EMAIL_USER`: Email address for SMTP authentication
 - `EMAIL_PASS`: Email password or App Password
 - `RECIPIENT_EMAIL`: Email address to receive messages (optional)
 - `SMTP_HOST`: SMTP server host (default: smtp.gmail.com)
 - `SMTP_PORT`: SMTP server port (default: 587)
+- `FRONTEND_URL`: Frontend URL for CORS (optional, defaults to "*" for all origins)
+
+## Deployment to Railway
+
+See [RAILWAY_DEPLOY.md](./RAILWAY_DEPLOY.md) for detailed instructions on deploying to Railway.
+
+Quick steps:
+1. Connect your GitHub repository to Railway
+2. Set the root directory to `backend`
+3. Add environment variables (EMAIL_USER, EMAIL_PASS, etc.)
+4. Deploy!
 
