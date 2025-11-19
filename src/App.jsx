@@ -217,7 +217,7 @@ const PROJECTS = [
     link: "https://yassir.com/",
     color: "#08031a",
     name: "Yassir",
-    image: "/freelancer-portfolio/src/assets/yassir-light.svg",
+    image: "/freelancer-portfolio/tree/main/src/assets/yassir-light.svg",
   },
   {
     id: 2,
@@ -236,7 +236,7 @@ const PROJECTS = [
     link: "https://club.co/",
     color: "#08031a",
     name: "Club",
-    image: "/freelancer-portfolio/src/assets/club-logo.webp",
+    image: "/freelancer-portfolio/tree/main/src/assets/club-logo.webp",
   },
   {
     id: 3,
@@ -247,7 +247,7 @@ const PROJECTS = [
     link: "https://mocklink.com/opsflow",
     color: "#fff",
     name: "Maystro Delivery",
-    image: "/freelancer-portfolio/src/assets/logo.svg",
+    image: "/freelancer-portfolio/tree/main/src/assets/logo.svg",
   },
 ];
 
