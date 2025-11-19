@@ -1,7 +1,7 @@
-import express from "express";
 import cors from "cors";
-import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import express from "express";
+import nodemailer from "nodemailer";
 
 dotenv.config();
 
@@ -29,6 +29,19 @@ const createTransporter = () => {
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS, // Use App Password for Gmail
+    },
+    // Add timeout and connection options for deployed environments
+    connectionTimeout: 60000, // 60 seconds
+    greetingTimeout: 30000, // 30 seconds
+    socketTimeout: 60000, // 60 seconds
+    // Additional options for better reliability
+    pool: false, // Set to true if you want connection pooling
+    maxConnections: 1,
+    maxMessages: 3,
+    // Retry options
+    retry: {
+      attempts: 3,
+      delay: 2000, // 2 seconds between retries
     },
   });
 };
