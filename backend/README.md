@@ -89,7 +89,12 @@ See [RAILWAY_DEPLOY.md](./RAILWAY_DEPLOY.md) for detailed instructions on deploy
 
 Quick steps:
 1. Connect your GitHub repository to Railway
-2. Set the root directory to `backend`
+2. Create a service pointing to the `backend/` folder (Railway may auto-detect it)
 3. Add environment variables (EMAIL_USER, EMAIL_PASS, etc.)
 4. Deploy!
+
+**Note:** Railway doesn't have a "root directory" setting in the UI. Instead:
+- Railway auto-detects the `backend/` folder via `package.json` and `railway.toml`
+- Or create a new service and select `backend` as the path during setup
+- Or use Railway CLI from the `backend/` directory
 

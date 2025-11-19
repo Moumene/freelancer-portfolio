@@ -14,31 +14,77 @@ This guide will help you deploy the backend server to Railway.
 
 Make sure your backend code is committed and pushed to GitHub.
 
+**Important Files:**
+
+- `backend/package.json` - Railway uses this to detect Node.js projects
+- `backend/railway.toml` - Railway configuration (already created)
+- `backend/server.js` - Your server file
+
 ### 2. Create a New Project on Railway
 
 1. Go to https://railway.app and sign in
 2. Click "New Project"
 3. Select "Deploy from GitHub repo"
 4. Choose your repository
-5. Railway will detect the backend folder automatically, or you can specify it
 
 ### 3. Configure the Service
 
-1. In your Railway project, click on the service
-2. Go to the "Settings" tab
-3. Set the **Root Directory** to `backend` (if not auto-detected)
-4. Set the **Start Command** to `npm start` (if not auto-detected)
+**Option A: Railway Auto-Detection (Recommended)**
+
+- Railway should automatically detect the `backend/` folder if it contains a `package.json`
+- The `railway.toml` file in the backend folder will help Railway configure it correctly
+
+**Option B: Create Service from Specific Path**
+
+1. In your Railway project, click "+ New" → "GitHub Repo"
+2. Select your repository
+3. Railway will show a path selector - choose `backend` from the dropdown
+4. Click "Deploy"
+
+**Option C: Manual Service Configuration**
+
+1. After connecting the repo, Railway may create a service from the root
+2. Go to the service → "Settings" tab
+3. Look for "Source" or "Path" settings
+4. If available, set it to `backend`
+5. The `railway.toml` file in the backend folder should handle the rest
+
+**Note:** Railway's interface changes frequently. If you don't see a root directory option:
+
+- The `railway.toml` file in the `backend/` folder should help Railway detect the correct configuration
+- Railway will look for `package.json` in the service directory
+- Make sure the service is pointing to the `backend/` folder path
+
+**Alternative: Using Railway CLI**
+If the web interface doesn't work, you can use Railway CLI:
+
+```bash
+# Install Railway CLI
+npm i -g @railway/cli
+
+# Login
+railway login
+
+# Link to your project (from the backend directory)
+cd backend
+railway link
+
+# Deploy
+railway up
+```
 
 ### 4. Set Environment Variables
 
 Go to the "Variables" tab and add the following environment variables:
 
 #### Required Variables:
+
 - `EMAIL_USER` - Your email address (e.g., `your-email@gmail.com`)
 - `EMAIL_PASS` - Your email password or App Password
 - `RECIPIENT_EMAIL` - Where you want to receive contact form messages (optional, defaults to EMAIL_USER)
 
 #### Optional Variables:
+
 - `PORT` - Server port (Railway sets this automatically, but you can override)
 - `FRONTEND_URL` - Your frontend URL for CORS (e.g., `https://yourusername.github.io`)
 - `SMTP_HOST` - SMTP server host (default: `smtp.gmail.com`)
@@ -77,6 +123,7 @@ const apiUrl =
 Or better yet, use an environment variable:
 
 1. Create a `.env.production` file in your frontend root:
+
    ```
    VITE_API_URL=https://your-app.up.railway.app
    ```
@@ -84,7 +131,7 @@ Or better yet, use an environment variable:
 2. Update `App.jsx`:
    ```javascript
    const apiUrl =
-     import.meta.env.VITE_API_URL || 
+     import.meta.env.VITE_API_URL ||
      (import.meta.env.MODE === "production"
        ? "https://your-app.up.railway.app/api/send-email"
        : "/api/send-email");
@@ -115,25 +162,36 @@ Or better yet, use an environment variable:
 ## Troubleshooting
 
 ### Email not sending
+
 - Verify `EMAIL_USER` and `EMAIL_PASS` are set correctly
 - For Gmail, make sure you're using an App Password, not your regular password
 - Check the Railway logs for error messages
 
 ### CORS errors
+
 - Set `FRONTEND_URL` environment variable to your frontend domain
 - Make sure the frontend URL matches exactly (including https://)
 
 ### Build fails
+
 - Check that `package.json` has the correct start script
 - Verify Node.js version compatibility
 - Check Railway logs for specific error messages
+- Ensure Railway is detecting the `backend/` folder correctly (check build logs for the working directory)
+
+### Service not detecting backend folder
+
+- Make sure `railway.toml` exists in the `backend/` folder
+- Try creating a new service and selecting the `backend` path during setup
+- Check the build logs - they should show files from the `backend/` directory
+- If Railway is building from root, you may need to delete the service and recreate it, selecting `backend` as the path
 
 ## Cost
 
 Railway offers a free tier with:
+
 - $5 free credit per month
 - 500 hours of usage
 - Perfect for small projects and portfolios
 
 For more information, visit https://railway.app/pricing
-
