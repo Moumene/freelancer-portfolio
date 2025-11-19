@@ -6,7 +6,7 @@ This guide will help you deploy the backend server to Railway.
 
 1. A Railway account (sign up at https://railway.app)
 2. GitHub account (to connect your repository)
-3. Email credentials (Gmail App Password or other SMTP credentials)
+3. Resend account (sign up at https://resend.com) - for email sending
 
 ## Step-by-Step Deployment
 
@@ -73,29 +73,31 @@ railway link
 railway up
 ```
 
-### 4. Set Environment Variables
+### 4. Set Up Resend
 
-Go to the "Variables" tab and add the following environment variables:
+1. Sign up for a Resend account at https://resend.com
+2. Get your API key:
+   - Go to Dashboard → API Keys → Create API Key
+   - Copy the API key (starts with `re_`)
+3. (Optional) Add and verify your domain:
+   - Go to Domains → Add Domain
+   - Follow Resend's instructions to add DNS records in Namecheap
+   - Wait for DNS verification (can take up to 72 hours)
+
+### 5. Set Environment Variables
+
+Go to the "Variables" tab in Railway and add the following environment variables:
 
 #### Required Variables:
 
-- `EMAIL_USER` - Your email address (e.g., `your-email@gmail.com`)
-- `EMAIL_PASS` - Your email password or App Password
-- `RECIPIENT_EMAIL` - Where you want to receive contact form messages (optional, defaults to EMAIL_USER)
+- `RESEND_API_KEY` - Your Resend API key (starts with `re_`)
+- `FROM_EMAIL` - The email address to send from (e.g., `noreply@yourdomain.com` or use `onboarding@resend.dev` for testing)
+- `RECIPIENT_EMAIL` - Where you want to receive contact form messages (optional, defaults to FROM_EMAIL)
 
 #### Optional Variables:
 
 - `PORT` - Server port (Railway sets this automatically, but you can override)
 - `FRONTEND_URL` - Your frontend URL for CORS (e.g., `https://yourusername.github.io`)
-- `SMTP_HOST` - SMTP server host (default: `smtp.gmail.com`)
-- `SMTP_PORT` - SMTP server port (default: `587`)
-
-### 5. For Gmail Users
-
-1. Enable 2-Factor Authentication on your Google account
-2. Go to https://myaccount.google.com/apppasswords
-3. Generate an App Password for "Mail"
-4. Use this App Password (not your regular password) in `EMAIL_PASS`
 
 ### 6. Deploy
 
@@ -163,9 +165,11 @@ Or better yet, use an environment variable:
 
 ### Email not sending
 
-- Verify `EMAIL_USER` and `EMAIL_PASS` are set correctly
-- For Gmail, make sure you're using an App Password, not your regular password
+- Verify `RESEND_API_KEY` is set correctly in Railway environment variables
+- Check that `FROM_EMAIL` is set to a verified domain email (or use `onboarding@resend.dev` for testing)
+- Verify your domain DNS records in Resend dashboard if using a custom domain
 - Check the Railway logs for error messages
+- Make sure your Resend API key has the correct permissions
 
 ### CORS errors
 

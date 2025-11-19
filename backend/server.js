@@ -1,7 +1,7 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
 dotenv.config();
 
@@ -20,31 +20,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Create reusable transporter object using SMTP transport
-const createTransporter = () => {
-  return nodemailer.createTransport({
-    host: process.env.SMTP_HOST || "smtp.gmail.com",
-    port: parseInt(process.env.SMTP_PORT || "587"),
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS, // Use App Password for Gmail
-    },
-    // Add timeout and connection options for deployed environments
-    connectionTimeout: 60000, // 60 seconds
-    greetingTimeout: 30000, // 30 seconds
-    socketTimeout: 60000, // 60 seconds
-    // Additional options for better reliability
-    pool: false, // Set to true if you want connection pooling
-    maxConnections: 1,
-    maxMessages: 3,
-    // Retry options
-    retry: {
-      attempts: 3,
-      delay: 2000, // 2 seconds between retries
-    },
-  });
-};
+// Initialize Resend
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Health check endpoint
 app.get("/health", (req, res) => {
@@ -73,27 +50,21 @@ app.post("/api/send-email", async (req, res) => {
       });
     }
 
-    // Check if email credentials are configured
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-      console.error("Email credentials not configured");
+    // Check if Resend API key is configured
+    if (!process.env.RESEND_API_KEY) {
+      console.error("Resend API key not configured");
       return res.status(500).json({
         success: false,
         error:
-          "Email service not configured. Please set EMAIL_USER and EMAIL_PASS environment variables.",
+          "Email service not configured. Please set RESEND_API_KEY environment variable.",
       });
     }
 
-    // Create transporter
-    const transporter = createTransporter();
-
-    // Verify transporter configuration
-    await transporter.verify();
-
-    // Email content
-    const mailOptions = {
-      from: `"${name}" <${process.env.EMAIL_USER}>`,
+    // Send email using Resend
+    const { data, error } = await resend.emails.send({
+      from: process.env.FROM_EMAIL || "onboarding@resend.dev", // Use your verified domain email
+      to: process.env.RECIPIENT_EMAIL || process.env.FROM_EMAIL,
       replyTo: email,
-      to: process.env.RECIPIENT_EMAIL || process.env.EMAIL_USER,
       subject: `New Contact Form Message from ${name}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -118,17 +89,23 @@ Email: ${email}
 Message:
 ${message}
       `,
-    };
+    });
 
-    // Send email
-    const info = await transporter.sendMail(mailOptions);
+    if (error) {
+      console.error("Error sending email:", error);
+      return res.status(500).json({
+        success: false,
+        error: "Failed to send email",
+        details: error.message,
+      });
+    }
 
-    console.log("Email sent successfully:", info.messageId);
+    console.log("Email sent successfully:", data?.id);
 
     res.json({
       success: true,
       message: "Email sent successfully",
-      messageId: info.messageId,
+      messageId: data?.id,
     });
   } catch (error) {
     console.error("Error sending email:", error);
@@ -144,9 +121,9 @@ ${message}
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server is running on port ${PORT}`);
   console.log(`Health check: http://0.0.0.0:${PORT}/health`);
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+  if (!process.env.RESEND_API_KEY) {
     console.warn(
-      "⚠️  WARNING: EMAIL_USER and EMAIL_PASS not set. Email functionality will not work."
+      "⚠️  WARNING: RESEND_API_KEY not set. Email functionality will not work."
     );
   }
 });
