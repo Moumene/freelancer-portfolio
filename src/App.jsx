@@ -247,7 +247,7 @@ const PROJECTS = [
     link: "https://mocklink.com/opsflow",
     color: "#fff",
     name: "Maystro Delivery",
-    image: "/freelancer-portfolio/tree/main/src/assets/logo.svg",
+    image: "assets/logo.svg",
   },
 ];
 
@@ -1174,8 +1174,7 @@ const Footer = () => {
           }}
         >
           <p style={{ fontSize: isMobile ? "0.75rem" : "0.875rem" }}>
-            &copy; {new Date().getFullYear()} Freelance Software Solutions. All
-            rights reserved.
+            &copy; {new Date().getFullYear()} LOUIFI DEV. All rights reserved.
           </p>
           <p
             style={{
