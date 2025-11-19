@@ -985,15 +985,28 @@ const ContactSection = () => {
 
     try {
       // Determine API URL based on environment
-      // In production, use VITE_API_URL if set, otherwise use the default Railway URL
-      // In development, use the Vite proxy
-      const apiUrl =
-        import.meta.env.MODE === "production"
-          ? `${
-              import.meta.env.VITE_API_URL ||
-              "https://your-backend.up.railway.app"
-            }/api/send-email`
-          : "/api/send-email"; // Uses Vite proxy in development
+      // In production (GitHub Pages), use VITE_API_URL environment variable
+      // In development, use the Vite proxy to localhost:3001
+      let apiUrl;
+
+      if (import.meta.env.MODE === "production") {
+        const backendUrl = import.meta.env.VITE_API_URL;
+        if (!backendUrl) {
+          console.error(
+            "VITE_API_URL not set. Please configure your Railway backend URL."
+          );
+          setStatus(
+            "Backend not configured. Please contact the site administrator."
+          );
+          return;
+        }
+        // Ensure no trailing slash
+        const cleanUrl = backendUrl.replace(/\/$/, "");
+        apiUrl = `${cleanUrl}/api/send-email`;
+      } else {
+        // Development: use Vite proxy
+        apiUrl = "/api/send-email";
+      }
 
       const response = await fetch(apiUrl, {
         method: "POST",
